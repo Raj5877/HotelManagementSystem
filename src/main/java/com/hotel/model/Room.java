@@ -2,32 +2,40 @@ package com.hotel.model;
 
 public class Room {
     private int roomId;
-    private String roomType;
-    private double price;
+    private int typeId;
     private boolean isAvailable;
 
-    public Room(int roomId, String roomType, double price, boolean isAvailable) {
+    // Transient fields joined from room_types for UI
+    private String roomTypeName;
+    private double price;
+
+    public Room(int roomId, int typeId, boolean isAvailable) {
         this.roomId = roomId;
-        this.roomType = roomType;
-        this.price = price;
+        this.typeId = typeId;
         this.isAvailable = isAvailable;
     }
 
     public int getRoomId() { return roomId; }
     public void setRoomId(int roomId) { this.roomId = roomId; }
 
-    public String getRoomType() { return roomType; }
-    public void setRoomType(String roomType) { this.roomType = roomType; }
+    public int getTypeId() { return typeId; }
+    public void setTypeId(int typeId) { this.typeId = typeId; }
+
+    public boolean isIsAvailable() { return isAvailable; }
+    public boolean getIsAvailable() { return isAvailable; }
+    public void setIsAvailable(boolean available) { isAvailable = available; }
+
+    public String getRoomTypeName() { return roomTypeName; }
+    public void setRoomTypeName(String roomTypeName) { this.roomTypeName = roomTypeName; }
 
     public double getPrice() { return price; }
     public void setPrice(double price) { this.price = price; }
 
-    public boolean isIsAvailable() { return isAvailable; } // PropertyValueFactory uses isIsAvailable for boolean usually, but getIsAvailable or available is also good.
-    public boolean getIsAvailable() { return isAvailable; }
-    public void setIsAvailable(boolean available) { isAvailable = available; }
+    // Alias for PropertyValueFactory to match old "roomType" binding if needed
+    public String getRoomType() { return getRoomTypeName(); }
 
     @Override
     public String toString() {
-        return "Room " + roomId + " (" + roomType + ") - $" + price;
+        return "Room " + roomId + " (" + roomTypeName + ") - ₹" + price;
     }
 }

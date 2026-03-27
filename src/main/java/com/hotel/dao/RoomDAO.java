@@ -12,30 +12,36 @@ import java.util.List;
 public class RoomDAO {
 
     public static void addRoom(Room room) throws SQLException {
-        String query = "INSERT INTO rooms (room_id, room_type, price, is_available) VALUES (?, ?, ?, ?)";
+        String query = "INSERT INTO rooms (room_id, type_id, is_available) VALUES (?, ?, ?)";
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(query)) {
             pstmt.setInt(1, room.getRoomId());
-            pstmt.setString(2, room.getRoomType());
-            pstmt.setDouble(3, room.getPrice());
-            pstmt.setBoolean(4, room.getIsAvailable());
+            pstmt.setInt(2, room.getTypeId());
+            pstmt.setBoolean(3, room.getIsAvailable());
             pstmt.executeUpdate();
         }
     }
 
+    private static Room mapRowToRoom(ResultSet rs) throws SQLException {
+        Room r = new Room(
+                rs.getInt("room_id"),
+                rs.getInt("type_id"),
+                rs.getBoolean("is_available")
+        );
+        r.setRoomTypeName(rs.getString("type_name"));
+        r.setPrice(rs.getDouble("base_price"));
+        return r;
+    }
+
     public static List<Room> getAllRooms() throws SQLException {
         List<Room> rooms = new ArrayList<>();
-        String query = "SELECT * FROM rooms";
+        String query = "SELECT r.*, rt.type_name, rt.base_price FROM rooms r " +
+                       "JOIN room_types rt ON r.type_id = rt.type_id";
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(query);
              ResultSet rs = pstmt.executeQuery()) {
             while (rs.next()) {
-                rooms.add(new Room(
-                        rs.getInt("room_id"),
-                        rs.getString("room_type"),
-                        rs.getDouble("price"),
-                        rs.getBoolean("is_available")
-                ));
+                rooms.add(mapRowToRoom(rs));
             }
         }
         return rooms;
@@ -43,17 +49,14 @@ public class RoomDAO {
 
     public static List<Room> getAvailableRooms() throws SQLException {
         List<Room> rooms = new ArrayList<>();
-        String query = "SELECT * FROM rooms WHERE is_available = TRUE";
+        String query = "SELECT r.*, rt.type_name, rt.base_price FROM rooms r " +
+                       "JOIN room_types rt ON r.type_id = rt.type_id " +
+                       "WHERE r.is_available = TRUE";
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(query);
              ResultSet rs = pstmt.executeQuery()) {
             while (rs.next()) {
-                rooms.add(new Room(
-                        rs.getInt("room_id"),
-                        rs.getString("room_type"),
-                        rs.getDouble("price"),
-                        rs.getBoolean("is_available")
-                ));
+                rooms.add(mapRowToRoom(rs));
             }
         }
         return rooms;
@@ -70,35 +73,29 @@ public class RoomDAO {
     }
 
     public static Room getCheapestAvailableRoom() throws SQLException {
-        String query = "SELECT * FROM rooms WHERE is_available = TRUE ORDER BY price ASC LIMIT 1";
+        String query = "SELECT r.*, rt.type_name, rt.base_price FROM rooms r " +
+                       "JOIN room_types rt ON r.type_id = rt.type_id " +
+                       "WHERE r.is_available = TRUE ORDER BY rt.base_price ASC LIMIT 1";
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(query);
              ResultSet rs = pstmt.executeQuery()) {
             if (rs.next()) {
-                return new Room(
-                        rs.getInt("room_id"),
-                        rs.getString("room_type"),
-                        rs.getDouble("price"),
-                        rs.getBoolean("is_available")
-                );
+                return mapRowToRoom(rs);
             }
         }
         return null;
     }
 
     public static Room getRoomById(int roomId) throws SQLException {
-        String query = "SELECT * FROM rooms WHERE room_id = ?";
+        String query = "SELECT r.*, rt.type_name, rt.base_price FROM rooms r " +
+                       "JOIN room_types rt ON r.type_id = rt.type_id " +
+                       "WHERE r.room_id = ?";
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(query)) {
             pstmt.setInt(1, roomId);
             try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {
-                    return new Room(
-                            rs.getInt("room_id"),
-                            rs.getString("room_type"),
-                            rs.getDouble("price"),
-                            rs.getBoolean("is_available")
-                    );
+                    return mapRowToRoom(rs);
                 }
             }
         }
