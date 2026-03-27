@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.cell.PropertyValueFactory?>
+
+<VBox xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.hotel.controller.BookingController" spacing="20" styleClass="content-pane">
+
+    <Label text="Booking &amp; Checkout" styleClass="header-label"/>
+
+    <HBox spacing="20">
+        <!-- Booking Form -->
+        <VBox spacing="10" styleClass="grid-pane" HBox.hgrow="ALWAYS">
+            <Label text="New Booking" style="-fx-font-weight: bold; -fx-font-size: 16px;"/>
+            <GridPane hgap="10" vgap="10">
+                <Label text="Customer:" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                <ComboBox fx:id="cmbCustomer" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+
+                <Label text="Select Room:" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                <ComboBox fx:id="cmbRoom" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+
+                <Label text="Check-In:" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                <DatePicker fx:id="dpCheckIn" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+
+                <Label text="Check-Out:" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+                <DatePicker fx:id="dpCheckOut" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+
+                <Button text="Suggest Cheapest Room" onAction="#handleSuggestRoom" styleClass="secondary-btn" GridPane.columnIndex="0" GridPane.rowIndex="4"/>
+                <Button text="Book Room" onAction="#handleBookRoom" styleClass="action-btn" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
+            </GridPane>
+        </VBox>
+
+        <!-- Checkout Form -->
+        <VBox spacing="10" styleClass="grid-pane" HBox.hgrow="ALWAYS">
+            <Label text="Checkout Processing" style="-fx-font-weight: bold; -fx-font-size: 16px;"/>
+            <GridPane hgap="10" vgap="10">
+                <Label text="Select Booking:" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                <ComboBox fx:id="cmbBooking" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+
+                <Label text="Actual Check-Out Date:" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                <DatePicker fx:id="dpActualCheckOut" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+
+                <Label text="Custom Discount (%):" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                <TextField fx:id="txtCustomDiscount" promptText="0.0" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+
+                <Button text="Checkout &amp; Generate Bill" onAction="#handleCheckout" styleClass="action-btn" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+            </GridPane>
+        </VBox>
+    </HBox>
+
+    <Label text="All Bookings History" style="-fx-font-weight: bold; -fx-font-size: 16px;"/>
+    <TableView fx:id="tblBookings" VBox.vgrow="ALWAYS">
+        <columns>
+            <TableColumn text="ID" prefWidth="50">
+                <cellValueFactory><PropertyValueFactory property="bookingId" /></cellValueFactory>
+            </TableColumn>
+            <TableColumn text="Customer" prefWidth="150">
+                <cellValueFactory><PropertyValueFactory property="customerName" /></cellValueFactory>
+            </TableColumn>
+            <TableColumn text="Room Detail" prefWidth="150">
+                <cellValueFactory><PropertyValueFactory property="roomInfo" /></cellValueFactory>
+            </TableColumn>
+            <TableColumn text="Check-In" prefWidth="100">
+                <cellValueFactory><PropertyValueFactory property="checkInDate" /></cellValueFactory>
+            </TableColumn>
+            <TableColumn text="Check-Out" prefWidth="100">
+                <cellValueFactory><PropertyValueFactory property="checkOutDate" /></cellValueFactory>
+            </TableColumn>
+            <TableColumn text="Actual Out" prefWidth="100">
+                <cellValueFactory><PropertyValueFactory property="actualCheckOutDate" /></cellValueFactory>
+            </TableColumn>
+            <TableColumn text="Status" prefWidth="100">
+                <cellValueFactory><PropertyValueFactory property="status" /></cellValueFactory>
+            </TableColumn>
+        </columns>
+    </TableView>
+
+</VBox>

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.cell.PropertyValueFactory?>
+<?import java.lang.String?>
+<?import javafx.collections.FXCollections?>
+<?import javafx.geometry.Insets?>
+
+<VBox xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.hotel.controller.RoomController" spacing="20" styleClass="content-pane">
+
+    <Label text="Manage Rooms" styleClass="header-label"/>
+
+    <GridPane styleClass="grid-pane">
+        <Label text="Room Number:" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+        <TextField fx:id="txtRoomId" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+
+        <Label text="Room Type:" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+        <ComboBox fx:id="cmbRoomType" GridPane.columnIndex="1" GridPane.rowIndex="1">
+            <items>
+                <FXCollections fx:factory="observableArrayList">
+                    <String fx:value="Single"/>
+                    <String fx:value="Double"/>
+                    <String fx:value="Deluxe"/>
+                </FXCollections>
+            </items>
+        </ComboBox>
+
+        <Label text="Price (Per Day):" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+        <TextField fx:id="txtPrice" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+
+        <Button text="Add Room" onAction="#handleAddRoom" styleClass="action-btn" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+    </GridPane>
+
+    <HBox spacing="10">
+        <Button text="Load All Rooms" onAction="#loadAllRooms" styleClass="action-btn"/>
+        <Button text="Show Available Only" onAction="#loadAvailableRooms" styleClass="secondary-btn"/>
+    </HBox>
+
+    <TableView fx:id="tblRooms" VBox.vgrow="ALWAYS">
+        <columns>
+            <TableColumn text="Room No" prefWidth="150" >
+                <cellValueFactory><PropertyValueFactory property="roomId" /></cellValueFactory>
+            </TableColumn>
+            <TableColumn text="Type" prefWidth="200">
+                <cellValueFactory><PropertyValueFactory property="roomType" /></cellValueFactory>
+            </TableColumn>
+            <TableColumn text="Price ($)" prefWidth="150">
+                <cellValueFactory><PropertyValueFactory property="price" /></cellValueFactory>
+            </TableColumn>
+            <TableColumn text="Available?" prefWidth="150">
+                <cellValueFactory><PropertyValueFactory property="isAvailable" /></cellValueFactory>
+            </TableColumn>
+        </columns>
+    </TableView>
+</VBox>

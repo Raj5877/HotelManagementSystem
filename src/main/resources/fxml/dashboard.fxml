@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.layout.StackPane?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.hotel.controller.DashboardController" 
+            stylesheets="@../css/style.css" prefWidth="1024" prefHeight="768">
+
+    <!-- Left Sidebar -->
+    <left>
+        <VBox styleClass="sidebar" spacing="10" prefWidth="250">
+            <Label text="Hotel Management" />
+            <Button text="Manage Rooms" onAction="#showRooms" maxWidth="Infinity" />
+            <Button text="Manage Customers" onAction="#showCustomers" maxWidth="Infinity" />
+            <Button text="Booking / Checkout" onAction="#showBookings" maxWidth="Infinity" />
+        </VBox>
+    </left>
+
+    <!-- Center Content Area -->
+    <center>
+        <StackPane fx:id="contentArea" styleClass="content-pane">
+            <Label text="Welcome to the Hotel Management System" styleClass="header-label"/>
+        </StackPane>
+    </center>
+
+</BorderPane>

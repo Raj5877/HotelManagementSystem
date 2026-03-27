@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Button?>
+
+<VBox xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.hotel.controller.BillingController" 
+      spacing="20" styleClass="content-pane" stylesheets="@../css/style.css">
+
+    <Label text="Final Bill Invoice" styleClass="header-label"/>
+
+    <GridPane hgap="20" vgap="15" styleClass="grid-pane">
+        <Label text="Customer Name:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+        <Label fx:id="lblCustomerName" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+
+        <Label text="Room Info:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+        <Label fx:id="lblRoomInfo" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+
+        <Label text="Days Stayed:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+        <Label fx:id="lblDaysStayed" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+
+        <Label text="Base Cost:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+        <Label fx:id="lblBaseCost" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+
+        <Label text="Duration Discount:" style="-fx-font-weight: bold; -fx-text-fill: #10b981;" GridPane.columnIndex="0" GridPane.rowIndex="4"/>
+        <Label fx:id="lblDiscount" style="-fx-text-fill: #10b981;" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
+
+        <Label text="Custom Manual Discount:" style="-fx-font-weight: bold; -fx-text-fill: #10b981;" GridPane.columnIndex="0" GridPane.rowIndex="5"/>
+        <Label fx:id="lblCustomDiscount" style="-fx-text-fill: #10b981;" GridPane.columnIndex="1" GridPane.rowIndex="5"/>
+
+        <Label text="Late Fee (150% rate/day):" style="-fx-font-weight: bold; -fx-text-fill: #ef4444;" GridPane.columnIndex="0" GridPane.rowIndex="6"/>
+        <Label fx:id="lblLateFee" style="-fx-text-fill: #ef4444;" GridPane.columnIndex="1" GridPane.rowIndex="6"/>
+
+        <Label text="Final Total:" style="-fx-font-size: 20; -fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="7"/>
+        <Label fx:id="lblTotal" style="-fx-font-size: 20; -fx-font-weight: bold; -fx-text-fill: #3b82f6;" GridPane.columnIndex="1" GridPane.rowIndex="7"/>
+    </GridPane>
+
+    <Button text="Close Window" onAction="#handleClose" styleClass="action-btn" maxWidth="Infinity"/>
+
+</VBox>
