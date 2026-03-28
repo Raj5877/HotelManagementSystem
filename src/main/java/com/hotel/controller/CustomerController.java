@@ -12,14 +12,25 @@ import javafx.scene.control.TextField;
 import java.sql.SQLException;
 import java.util.List;
 
+import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.scene.control.TableColumn;
+
 public class CustomerController {
 
     @FXML private TextField txtName;
     @FXML private TextField txtContact;
     @FXML private TableView<Customer> tblCustomers;
 
+    @FXML private TableColumn<Customer, Integer> colCustomerId;
+    @FXML private TableColumn<Customer, String> colName;
+    @FXML private TableColumn<Customer, String> colContact;
+
     @FXML
     public void initialize() {
+        colCustomerId.setCellValueFactory(data -> new ReadOnlyObjectWrapper<>(data.getValue().getCustomerId()));
+        colName.setCellValueFactory(data -> new ReadOnlyObjectWrapper<>(data.getValue().getName()));
+        colContact.setCellValueFactory(data -> new ReadOnlyObjectWrapper<>(data.getValue().getContact()));
+
         loadAllCustomers();
     }
 

@@ -14,15 +14,12 @@ import java.util.List;
 public class BookingDAO {
 
     public static void addBooking(Booking booking) throws SQLException {
-        // We use boolean flag trick: if it's already booked, it throws or updates room status.
-        // In a real application we'd use transactions.
         Connection conn = DBConnection.getConnection();
         boolean originalAutoCommit = conn.getAutoCommit();
         
         try {
             conn.setAutoCommit(false);
             
-            // 1. Insert into bookings
             String query = "INSERT INTO bookings (customer_id, room_id, check_in_date, check_out_date) VALUES (?, ?, ?, ?)";
             try (PreparedStatement pstmt = conn.prepareStatement(query)) {
                 pstmt.setInt(1, booking.getCustomerId());
@@ -32,7 +29,6 @@ public class BookingDAO {
                 pstmt.executeUpdate();
             }
 
-            // 2. Update room availability
             String updateRoomQuery = "UPDATE rooms SET is_available = FALSE WHERE room_id = ?";
             try (PreparedStatement updateStmt = conn.prepareStatement(updateRoomQuery)) {
                 updateStmt.setInt(1, booking.getRoomId());
@@ -45,19 +41,22 @@ public class BookingDAO {
             throw e;
         } finally {
             conn.setAutoCommit(originalAutoCommit);
+            conn.close(); // FIXED LEAK
         }
     }
 
     public static List<Booking> getAllBookings() throws SQLException {
         List<Booking> bookings = new ArrayList<>();
-        // Includes joins to fetch customer name and room type for display
-        String query = "SELECT b.*, c.name, r.room_type FROM bookings b " +
+        // Modified query to gracefully skip if customer or room was deleted
+        String query = "SELECT b.*, c.name, r.type_id, rt.type_name FROM bookings b " +
                        "JOIN customers c ON b.customer_id = c.customer_id " +
-                       "JOIN rooms r ON b.room_id = r.room_id";
+                       "JOIN rooms r ON b.room_id = r.room_id " +
+                       "JOIN room_types rt ON r.type_id = rt.type_id";
 
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(query);
              ResultSet rs = pstmt.executeQuery()) {
+             
             while (rs.next()) {
                 Date actualOutDateSql = rs.getDate("actual_check_out_date");
                 LocalDate actualOutDate = (actualOutDateSql != null) ? actualOutDateSql.toLocalDate() : null;
@@ -68,32 +67,42 @@ public class BookingDAO {
                         rs.getInt("room_id"),
                         rs.getDate("check_in_date").toLocalDate(),
                         rs.getDate("check_out_date").toLocalDate(),
-                        actualOutDate
+                        actualOutDate,
+                        rs.getString("actual_check_out_time_category")
                 );
                 b.setCustomerName(rs.getString("name"));
-                b.setRoomInfo("Room " + b.getRoomId() + " (" + rs.getString("room_type") + ")");
+                b.setRoomInfo("Room " + b.getRoomId() + " (" + rs.getString("type_name") + ")");
                 bookings.add(b);
             }
         }
         return bookings;
     }
 
-    public static void checkoutBooking(int bookingId, int roomId, LocalDate actualCheckOutDate) throws SQLException {
+    public static void extendStay(int bookingId, LocalDate newCheckOutDate) throws SQLException {
+        String query = "UPDATE bookings SET check_out_date = ? WHERE booking_id = ?";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
+            pstmt.setDate(1, Date.valueOf(newCheckOutDate));
+            pstmt.setInt(2, bookingId);
+            pstmt.executeUpdate();
+        }
+    }
+
+    public static void checkoutBooking(int bookingId, int roomId, LocalDate actualCheckOutDate, String timeCategory) throws SQLException {
         Connection conn = DBConnection.getConnection();
         boolean originalAutoCommit = conn.getAutoCommit();
         
         try {
             conn.setAutoCommit(false);
 
-            // 1. Update actual check-out date
-            String query = "UPDATE bookings SET actual_check_out_date = ? WHERE booking_id = ?";
+            String query = "UPDATE bookings SET actual_check_out_date = ?, actual_check_out_time_category = ? WHERE booking_id = ?";
             try (PreparedStatement pstmt = conn.prepareStatement(query)) {
                 pstmt.setDate(1, Date.valueOf(actualCheckOutDate));
-                pstmt.setInt(2, bookingId);
+                pstmt.setString(2, timeCategory);
+                pstmt.setInt(3, bookingId);
                 pstmt.executeUpdate();
             }
 
-            // 2. Set room to available
             String updateRoomQuery = "UPDATE rooms SET is_available = TRUE WHERE room_id = ?";
             try (PreparedStatement pstmt = conn.prepareStatement(updateRoomQuery)) {
                 pstmt.setInt(1, roomId);
@@ -106,6 +115,7 @@ public class BookingDAO {
             throw e;
         } finally {
             conn.setAutoCommit(originalAutoCommit);
+            conn.close(); // FIXED LEAK
         }
     }
 }

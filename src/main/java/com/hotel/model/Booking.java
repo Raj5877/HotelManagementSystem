@@ -9,18 +9,20 @@ public class Booking {
     private LocalDate checkInDate;
     private LocalDate checkOutDate;
     private LocalDate actualCheckOutDate;
+    private String actualCheckOutTimeCategory;
 
     // Additional fields for displaying in TableViews (joined data)
     private String customerName;
     private String roomInfo;
 
-    public Booking(int bookingId, int customerId, int roomId, LocalDate checkInDate, LocalDate checkOutDate, LocalDate actualCheckOutDate) {
+    public Booking(int bookingId, int customerId, int roomId, LocalDate checkInDate, LocalDate checkOutDate, LocalDate actualCheckOutDate, String actualCheckOutTimeCategory) {
         this.bookingId = bookingId;
         this.customerId = customerId;
         this.roomId = roomId;
         this.checkInDate = checkInDate;
         this.checkOutDate = checkOutDate;
         this.actualCheckOutDate = actualCheckOutDate;
+        this.actualCheckOutTimeCategory = actualCheckOutTimeCategory;
     }
 
     public int getBookingId() { return bookingId; }
@@ -41,6 +43,9 @@ public class Booking {
     public LocalDate getActualCheckOutDate() { return actualCheckOutDate; }
     public void setActualCheckOutDate(LocalDate actualCheckOutDate) { this.actualCheckOutDate = actualCheckOutDate; }
 
+    public String getActualCheckOutTimeCategory() { return actualCheckOutTimeCategory; }
+    public void setActualCheckOutTimeCategory(String actualCheckOutTimeCategory) { this.actualCheckOutTimeCategory = actualCheckOutTimeCategory; }
+
     public String getCustomerName() { return customerName; }
     public void setCustomerName(String customerName) { this.customerName = customerName; }
 
@@ -49,5 +54,10 @@ public class Booking {
 
     public String getStatus() {
         return (actualCheckOutDate == null) ? "Active" : "Completed";
+    }
+
+    @Override
+    public String toString() {
+        return "Booking " + bookingId + " (" + customerName + ")" + (actualCheckOutDate == null ? "" : " - Completed");
     }
 }

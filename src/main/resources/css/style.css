@@ -71,6 +71,8 @@
     -fx-background-radius: 6;
     -fx-background-color: #374151;
     -fx-text-fill: #f3f4f6;
+    -fx-text-inner-color: #f3f4f6;
+    -fx-prompt-text-fill: #9ca3af;
     -fx-border-color: #4b5563;
     -fx-border-radius: 6;
     -fx-border-width: 1;
@@ -82,9 +84,34 @@
     -fx-background-color: #4b5563;
 }
 
-/* Base control inner components fixes */
-.combo-box .list-cell {
-    -fx-text-fill: #111827; /* Dark text in dropdown list so it's readable */
+/* --- Fix Dropdown Combo Box Visibility (NUCLEAR OPTION) --- */
+.combo-box {
+    -fx-background-color: #374151;
+    -fx-border-color: #4b5563;
+}
+.combo-box > .list-cell {
+    -fx-text-fill: white !important;
+}
+.combo-box-popup .list-view {
+    -fx-background-color: #374151 !important;
+}
+.combo-box-popup .list-view .list-cell {
+    -fx-text-fill: white !important;
+    -fx-background-color: transparent !important;
+}
+.combo-box-popup .list-view .list-cell:filled:selected, 
+.combo-box-popup .list-view .list-cell:filled:hover {
+    -fx-background-color: #3b82f6 !important;
+    -fx-text-fill: white !important;
+}
+
+/* --- Base control inner components fixes --- */
+.text-field, .text-area {
+    -fx-text-fill: white !important;
+    -fx-prompt-text-fill: #9ca3af !important;
+}
+.date-picker > .text-field {
+    -fx-text-fill: white !important;
 }
 
 /* Buttons */
@@ -161,3 +188,14 @@
     -fx-padding: 10;
     -fx-text-fill: #f3f4f6;
 }
+
+
+/* --- Table View Visibility Fixes --- */
+.table-view .table-cell {
+    -fx-text-fill: white !important;
+    -fx-alignment: CENTER_LEFT;
+}
+.table-view .column-header .label {
+    -fx-text-fill: white !important;
+}
+

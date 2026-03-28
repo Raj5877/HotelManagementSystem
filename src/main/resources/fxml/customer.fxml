@@ -30,15 +30,9 @@
 
     <TableView fx:id="tblCustomers" VBox.vgrow="ALWAYS">
         <columns>
-            <TableColumn text="ID" prefWidth="100">
-                <cellValueFactory><PropertyValueFactory property="customerId" /></cellValueFactory>
-            </TableColumn>
-            <TableColumn text="Name" prefWidth="300">
-                <cellValueFactory><PropertyValueFactory property="name" /></cellValueFactory>
-            </TableColumn>
-            <TableColumn text="Contact" prefWidth="250">
-                <cellValueFactory><PropertyValueFactory property="contact" /></cellValueFactory>
-            </TableColumn>
+            <TableColumn fx:id="colCustomerId" text="ID" prefWidth="100"/>
+            <TableColumn fx:id="colName" text="Name" prefWidth="300"/>
+            <TableColumn fx:id="colContact" text="Contact" prefWidth="250"/>
         </columns>
     </TableView>
 </VBox>

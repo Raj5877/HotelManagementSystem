@@ -5,59 +5,79 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.cell.PropertyValueFactory?>
-<?import java.lang.String?>
-<?import javafx.collections.FXCollections?>
-<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.Tab?>
 
 <VBox xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.hotel.controller.RoomController" spacing="20" styleClass="content-pane">
 
-    <Label text="Manage Rooms" styleClass="header-label"/>
+    <Label text="Manage Rooms &amp; Category Types" styleClass="header-label"/>
 
-    <GridPane styleClass="grid-pane">
-        <Label text="Room Number:" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
-        <TextField fx:id="txtRoomId" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+    <TabPane tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
+        
+        <!-- Tab 1: Rooms Framework -->
+        <Tab text="Rooms Framework">
+            <VBox spacing="15" style="-fx-padding: 20 0 0 0;">
+                <GridPane styleClass="grid-pane">
+                    <Label text="Room Number:" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                    <TextField fx:id="txtRoomId" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
 
-        <Label text="Room Type:" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
-        <ComboBox fx:id="cmbRoomType" GridPane.columnIndex="1" GridPane.rowIndex="1">
-            <items>
-                <FXCollections fx:factory="observableArrayList">
-                    <String fx:value="Single"/>
-                    <String fx:value="Double"/>
-                    <String fx:value="Deluxe"/>
-                </FXCollections>
-            </items>
-        </ComboBox>
+                    <Label text="Select Room Type:" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                    <ComboBox fx:id="cmbRoomType" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
 
-        <Label text="Price (Per Day):" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
-        <TextField fx:id="txtPrice" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+                    <Button text="Add Room" onAction="#handleAddRoom" styleClass="action-btn" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+                </GridPane>
 
-        <Button text="Add Room" onAction="#handleAddRoom" styleClass="action-btn" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
-    </GridPane>
+                <HBox spacing="10">
+                    <Button text="Load All Rooms" onAction="#loadAllRooms" styleClass="action-btn"/>
+                    <Button text="Show Available Only" onAction="#loadAvailableRooms" styleClass="secondary-btn"/>
+                </HBox>
 
-    <HBox spacing="10">
-        <Button text="Load All Rooms" onAction="#loadAllRooms" styleClass="action-btn"/>
-        <Button text="Show Available Only" onAction="#loadAvailableRooms" styleClass="secondary-btn"/>
-    </HBox>
+                <TableView fx:id="tblRooms" VBox.vgrow="ALWAYS">
+                    <columns>
+                        <TableColumn fx:id="colRoomId" text="Room No" prefWidth="150" />
+                        <TableColumn fx:id="colRoomTypeName" text="Room Type" prefWidth="250" />
+                        <TableColumn fx:id="colPrice" text="Price (₹)" prefWidth="150" />
+                        <TableColumn fx:id="colIsAvailable" text="Available?" prefWidth="100" />
+                    </columns>
+                </TableView>
+            </VBox>
+        </Tab>
 
-    <TableView fx:id="tblRooms" VBox.vgrow="ALWAYS">
-        <columns>
-            <TableColumn text="Room No" prefWidth="150" >
-                <cellValueFactory><PropertyValueFactory property="roomId" /></cellValueFactory>
-            </TableColumn>
-            <TableColumn text="Type" prefWidth="200">
-                <cellValueFactory><PropertyValueFactory property="roomType" /></cellValueFactory>
-            </TableColumn>
-            <TableColumn text="Price ($)" prefWidth="150">
-                <cellValueFactory><PropertyValueFactory property="price" /></cellValueFactory>
-            </TableColumn>
-            <TableColumn text="Available?" prefWidth="150">
-                <cellValueFactory><PropertyValueFactory property="isAvailable" /></cellValueFactory>
-            </TableColumn>
-        </columns>
-    </TableView>
+        <!-- Tab 2: Room Category Options -->
+        <Tab text="Room Category Options">
+            <VBox spacing="15" style="-fx-padding: 20 0 0 0;">
+                <GridPane styleClass="grid-pane">
+                    <Label text="Type Name:" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                    <TextField fx:id="txtTypeName" promptText="e.g. Standard Single" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+
+                    <Label text="Base Price (₹):" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                    <TextField fx:id="txtBasePrice" promptText="e.g. 1500" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+
+                    <Label text="Description:" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                    <TextArea fx:id="txtDescription" promptText="Details about this type..." prefRowCount="3" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+
+                    <Button text="Add Category" onAction="#handleAddRoomType" styleClass="action-btn" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+                </GridPane>
+
+                <HBox spacing="10">
+                    <Button text="Refresh List" onAction="#loadAllRoomTypes" styleClass="action-btn"/>
+                </HBox>
+
+                <TableView fx:id="tblRoomTypes" VBox.vgrow="ALWAYS">
+                    <columns>
+                        <TableColumn fx:id="colTypeId" text="ID" prefWidth="50" />
+                        <TableColumn fx:id="colTypeName" text="Type Name" prefWidth="200" />
+                        <TableColumn fx:id="colBasePrice" text="Base Price (₹)" prefWidth="150" />
+                        <TableColumn fx:id="colDescription" text="Description" prefWidth="350" />
+                    </columns>
+                </TableView>
+            </VBox>
+        </Tab>
+    </TabPane>
 </VBox>

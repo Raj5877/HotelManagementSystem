@@ -28,45 +28,55 @@ public class BillingController {
             if (r == null) return;
 
             long plannedDays = ChronoUnit.DAYS.between(b.getCheckInDate(), b.getCheckOutDate());
-            if (plannedDays == 0) plannedDays = 1; // Minimum 1 day
+            if (plannedDays == 0) plannedDays = 1;
 
             long actualDays = ChronoUnit.DAYS.between(b.getCheckInDate(), actualOut);
             if (actualDays == 0) actualDays = 1;
             
-            // Base Cost calculation (up to actual days or planned days, whichever is smaller, the rest is penalty)
-            long standardDaysStayed = Math.min(plannedDays, actualDays);
-            double baseCost = standardDaysStayed * r.getPrice();
+            // Base Cost calculation
+            double baseCost = actualDays * r.getPrice();
 
-            // Discount
+            // Discount based on duration
             double discountRate = 0;
-            if (standardDaysStayed > 10) {
+            if (actualDays > 10) {
                 discountRate = 0.20; // 20%
-            } else if (standardDaysStayed > 5) {
+            } else if (actualDays > 5) {
                 discountRate = 0.10; // 10%
             }
-            double discountAmount = baseCost * discountRate;
+            double durationDiscountAmount = baseCost * discountRate;
 
             // Custom manual discount
             double customDiscountAmount = baseCost * (customDiscountRate / 100.0);
 
-            // Late Fee
-            long lateDays = actualDays - plannedDays;
-            double lateFee = 0;
-            if (lateDays > 0) {
-                lateFee = lateDays * (r.getPrice() * 1.5); // 150% penalty per extra day
+            // Time Category Late Fee (Based on prompt constraints)
+            double timePenaltyRate = 0.0;
+            String timeCat = b.getActualCheckOutTimeCategory();
+            if (timeCat != null) {
+                if (timeCat.contains("2:00 PM - 6:00 PM")) {
+                    timePenaltyRate = 0.5; // 50% of one night
+                } else if (timeCat.contains("After 6:00 PM")) {
+                    timePenaltyRate = 1.0; // 100% of one night
+                }
             }
+            double lateFee = timePenaltyRate * r.getPrice();
 
-            double finalTotal = baseCost - discountAmount - customDiscountAmount + lateFee;
+            double finalTotal = baseCost - durationDiscountAmount - customDiscountAmount + lateFee;
 
-            // Update UI
+            // Update UI (Using ₹ heavily as requested)
             lblCustomerName.setText(b.getCustomerName() != null ? b.getCustomerName() : "Customer ID: " + b.getCustomerId());
-            lblRoomInfo.setText("Room " + r.getRoomId() + " (" + r.getRoomType() + ") - $" + r.getPrice() + "/day");
-            lblDaysStayed.setText(actualDays + " (Planned: " + plannedDays + ")");
-            lblBaseCost.setText(String.format("$%.2f", baseCost));
-            lblDiscount.setText(String.format("-$%.2f", discountAmount));
-            lblCustomDiscount.setText(String.format("-$%.2f (%.1f%%)", customDiscountAmount, customDiscountRate));
-            lblLateFee.setText(String.format("+$%.2f", lateFee));
-            lblTotal.setText(String.format("$%.2f", finalTotal));
+            lblRoomInfo.setText("Room " + r.getRoomId() + " (" + r.getRoomType() + ") - ₹" + r.getPrice() + "/day");
+            lblDaysStayed.setText(actualDays + " (Planned Limit: " + plannedDays + ")");
+            lblBaseCost.setText(String.format("₹%.2f", baseCost));
+            lblDiscount.setText(String.format("-₹%.2f (loyalty)", durationDiscountAmount));
+            lblCustomDiscount.setText(String.format("-₹%.2f (%.1f%%)", customDiscountAmount, customDiscountRate));
+            
+            if (timePenaltyRate > 0) {
+                lblLateFee.setText(String.format("+₹%.2f (%.0f%% room rate)", lateFee, timePenaltyRate * 100));
+            } else {
+                lblLateFee.setText("₹0.00 (No checkout delay penalty)");
+            }
+            
+            lblTotal.setText(String.format("₹%.2f", finalTotal));
 
         } catch (SQLException e) {
             e.printStackTrace();

@@ -1,5 +1,12 @@
-CREATE DATABASE IF NOT EXISTS hotel_management;
+DROP DATABASE IF EXISTS hotel_management;
+CREATE DATABASE hotel_management;
 USE hotel_management;
+
+-- Dropping tables to ensure clean application of new architecture
+DROP TABLE IF EXISTS bookings;
+DROP TABLE IF EXISTS rooms;
+DROP TABLE IF EXISTS room_types;
+DROP TABLE IF EXISTS customers;
 
 CREATE TABLE IF NOT EXISTS room_types (
     type_id INT PRIMARY KEY AUTO_INCREMENT,

@@ -5,82 +5,93 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ComboBox?>
-<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.DatePicker?>
-<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.cell.PropertyValueFactory?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.Tab?>
 
-<VBox xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.hotel.controller.BookingController" spacing="20" styleClass="content-pane">
+<VBox xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.hotel.controller.BookingController" spacing="15" styleClass="content-pane">
 
-    <Label text="Booking &amp; Checkout" styleClass="header-label"/>
+    <Label text="Reservations &amp; Checkouts" styleClass="header-label"/>
 
-    <HBox spacing="20">
-        <!-- Booking Form -->
-        <VBox spacing="10" styleClass="grid-pane" HBox.hgrow="ALWAYS">
-            <Label text="New Booking" style="-fx-font-weight: bold; -fx-font-size: 16px;"/>
-            <GridPane hgap="10" vgap="10">
-                <Label text="Customer:" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
-                <ComboBox fx:id="cmbCustomer" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+    <TabPane tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
+        
+        <!-- Tab 1: New Booking -->
+        <Tab text="Create New Booking">
+            <VBox spacing="15" style="-fx-padding: 20 0 0 0;">
+                <GridPane styleClass="grid-pane" hgap="15" vgap="15">
+                    <Label text="Select Customer:" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                    <ComboBox fx:id="cmbCustomer" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
 
-                <Label text="Select Room:" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
-                <ComboBox fx:id="cmbRoom" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+                    <Label text="Select Room:" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                    <ComboBox fx:id="cmbRoom" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
 
-                <Label text="Check-In:" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
-                <DatePicker fx:id="dpCheckIn" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+                    <Label text="Check-In Date:" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                    <DatePicker fx:id="dpCheckIn" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
 
-                <Label text="Check-Out:" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
-                <DatePicker fx:id="dpCheckOut" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+                    <Label text="Expected Check-Out Date:" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+                    <DatePicker fx:id="dpCheckOut" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
 
-                <Button text="Suggest Cheapest Room" onAction="#handleSuggestRoom" styleClass="secondary-btn" GridPane.columnIndex="0" GridPane.rowIndex="4"/>
-                <Button text="Book Room" onAction="#handleBookRoom" styleClass="action-btn" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
-            </GridPane>
-        </VBox>
+                    <Button text="Confirm Booking" onAction="#handleAddBooking" styleClass="action-btn" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
+                </GridPane>
 
-        <!-- Checkout Form -->
-        <VBox spacing="10" styleClass="grid-pane" HBox.hgrow="ALWAYS">
-            <Label text="Checkout Processing" style="-fx-font-weight: bold; -fx-font-size: 16px;"/>
-            <GridPane hgap="10" vgap="10">
-                <Label text="Select Booking:" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
-                <ComboBox fx:id="cmbBooking" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+                <HBox spacing="10">
+                    <Button text="Refresh View" onAction="#loadAllBookings" styleClass="action-btn"/>
+                </HBox>
 
-                <Label text="Actual Check-Out Date:" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
-                <DatePicker fx:id="dpActualCheckOut" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+                <TableView fx:id="tblBookingsNew" VBox.vgrow="ALWAYS">
+                    <columns>
+                        <TableColumn fx:id="colBookingIdNew" text="ID" prefWidth="50" />
+                        <TableColumn fx:id="colCustomerNew" text="Customer" prefWidth="200" />
+                        <TableColumn fx:id="colRoomNew" text="Room" prefWidth="250" />
+                        <TableColumn fx:id="colInDateNew" text="Check-In" prefWidth="120" />
+                        <TableColumn fx:id="colOutDateNew" text="Check-Out" prefWidth="120" />
+                        <TableColumn fx:id="colStatusNew" text="Status" prefWidth="150" />
+                    </columns>
+                </TableView>
+            </VBox>
+        </Tab>
 
-                <Label text="Custom Discount (%):" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
-                <TextField fx:id="txtCustomDiscount" promptText="0.0" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+        <!-- Tab 2: Checkout & Management -->
+        <Tab text="Manage &amp; Checkout">
+            <VBox spacing="15" style="-fx-padding: 20 0 0 0;">
+                <HBox spacing="15">
+                    <Label text="Select Booking to Manage:" style="-fx-alignment: center; -fx-padding: 5;"/>
+                    <ComboBox fx:id="cmbManageBooking" prefWidth="400"/>
+                </HBox>
 
-                <Button text="Checkout &amp; Generate Bill" onAction="#handleCheckout" styleClass="action-btn" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
-            </GridPane>
-        </VBox>
-    </HBox>
+                <GridPane styleClass="grid-pane" hgap="15" vgap="15">
+                    <!-- Extend Stay Section -->
+                    <Label text="Extend Stay To:" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                    <HBox spacing="10" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                        <DatePicker fx:id="dpExtendTo"/>
+                        <Button text="Apply Extension" onAction="#handleExtendStay" styleClass="secondary-btn"/>
+                    </HBox>
 
-    <Label text="All Bookings History" style="-fx-font-weight: bold; -fx-font-size: 16px;"/>
-    <TableView fx:id="tblBookings" VBox.vgrow="ALWAYS">
-        <columns>
-            <TableColumn text="ID" prefWidth="50">
-                <cellValueFactory><PropertyValueFactory property="bookingId" /></cellValueFactory>
-            </TableColumn>
-            <TableColumn text="Customer" prefWidth="150">
-                <cellValueFactory><PropertyValueFactory property="customerName" /></cellValueFactory>
-            </TableColumn>
-            <TableColumn text="Room Detail" prefWidth="150">
-                <cellValueFactory><PropertyValueFactory property="roomInfo" /></cellValueFactory>
-            </TableColumn>
-            <TableColumn text="Check-In" prefWidth="100">
-                <cellValueFactory><PropertyValueFactory property="checkInDate" /></cellValueFactory>
-            </TableColumn>
-            <TableColumn text="Check-Out" prefWidth="100">
-                <cellValueFactory><PropertyValueFactory property="checkOutDate" /></cellValueFactory>
-            </TableColumn>
-            <TableColumn text="Actual Out" prefWidth="100">
-                <cellValueFactory><PropertyValueFactory property="actualCheckOutDate" /></cellValueFactory>
-            </TableColumn>
-            <TableColumn text="Status" prefWidth="100">
-                <cellValueFactory><PropertyValueFactory property="status" /></cellValueFactory>
-            </TableColumn>
-        </columns>
-    </TableView>
+                    <!-- Checkout Section -->
+                    <Label text="Process Formal Checkout:" GridPane.columnIndex="0" GridPane.rowIndex="1" style="-fx-font-weight: bold;"/>
+                    
+                    <Label text="Departure Time Frame:" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                    <ComboBox fx:id="cmbCheckoutTime" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
 
+                    <Button text="Execute Checkout &amp; Bill" onAction="#handleCheckout" styleClass="action-btn" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+                </GridPane>
+
+                <TableView fx:id="tblBookingsManage" VBox.vgrow="ALWAYS">
+                    <columns>
+                        <TableColumn fx:id="colBookingIdManage" text="ID" prefWidth="50" />
+                        <TableColumn fx:id="colCustomerManage" text="Customer" prefWidth="200" />
+                        <TableColumn fx:id="colRoomManage" text="Room" prefWidth="250" />
+                        <TableColumn fx:id="colInDateManage" text="Check-In" prefWidth="120" />
+                        <TableColumn fx:id="colOutDateManage" text="Check-Out" prefWidth="120" />
+                        <TableColumn fx:id="colStatusManage" text="Status" prefWidth="150" />
+                    </columns>
+                </TableView>
+            </VBox>
+        </Tab>
+
+    </TabPane>
 </VBox>
