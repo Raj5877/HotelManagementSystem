@@ -1,41 +1,87 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.Region?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Separator?>
 
-<VBox xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.hotel.controller.BillingController" 
-      spacing="20" styleClass="content-pane" stylesheets="@../css/style.css">
+<VBox xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.hotel.controller.BillingController"
+      spacing="0"
+      style="-fx-background-color: #0d1117; -fx-padding: 0;"
+      prefWidth="500"
+      stylesheets="@../css/style.css">
 
-    <Label text="Final Bill Invoice" styleClass="header-label"/>
+    <!-- Invoice Box -->
+    <VBox style="-fx-background-color: #161b22; -fx-padding: 34 40; -fx-border-color: #30363d; -fx-border-width: 0 0 1 0;">
 
-    <GridPane hgap="20" vgap="15" styleClass="grid-pane">
-        <Label text="Customer Name:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
-        <Label fx:id="lblCustomerName" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+        <!-- Header -->
+        <HBox alignment="CENTER_LEFT" spacing="0">
+            <VBox spacing="3">
+                <Label text="✦ AURUM" style="-fx-text-fill: #c9a84c; -fx-font-size: 20px; -fx-font-weight: bold;"/>
+                <Label text="Hotel Management Suite" style="-fx-text-fill: #8b949e; -fx-font-size: 11px;"/>
+            </VBox>
+            <Region HBox.hgrow="ALWAYS"/>
+            <VBox alignment="CENTER_RIGHT" spacing="3">
+                <Label text="TAX INVOICE" style="-fx-text-fill: #e6edf3; -fx-font-size: 16px; -fx-font-weight: bold;"/>
+                <Label fx:id="lblInvoiceNo" text="INV-0000" style="-fx-text-fill: #8b949e; -fx-font-size: 12px;"/>
+            </VBox>
+        </HBox>
 
-        <Label text="Room Info:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
-        <Label fx:id="lblRoomInfo" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+        <Separator style="-fx-padding: 16 0; -fx-opacity: 0.4;"/>
 
-        <Label text="Days Stayed:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
-        <Label fx:id="lblDaysStayed" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+        <!-- Guest & Room Info -->
+        <GridPane hgap="20" vgap="10">
+            <Label text="GUEST" style="-fx-text-fill: #484f58; -fx-font-size: 10px; -fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+            <Label fx:id="lblCustomerName" style="-fx-text-fill: #e6edf3; -fx-font-size: 15px; -fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
 
-        <Label text="Base Cost:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
-        <Label fx:id="lblBaseCost" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+            <Label text="ROOM" style="-fx-text-fill: #484f58; -fx-font-size: 10px; -fx-font-weight: bold;" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+            <Label fx:id="lblRoomInfo" style="-fx-text-fill: #e6edf3; -fx-font-size: 13px;" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+        </GridPane>
 
-        <Label text="Duration Discount:" style="-fx-font-weight: bold; -fx-text-fill: #10b981;" GridPane.columnIndex="0" GridPane.rowIndex="4"/>
-        <Label fx:id="lblDiscount" style="-fx-text-fill: #10b981;" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
+        <Separator style="-fx-padding: 16 0; -fx-opacity: 0.4;"/>
 
-        <Label text="Custom Manual Discount:" style="-fx-font-weight: bold; -fx-text-fill: #10b981;" GridPane.columnIndex="0" GridPane.rowIndex="5"/>
-        <Label fx:id="lblCustomDiscount" style="-fx-text-fill: #10b981;" GridPane.columnIndex="1" GridPane.rowIndex="5"/>
+        <!-- Bill Breakdown -->
+        <GridPane hgap="24" vgap="12">
 
-        <Label text="Late Checkout Fee (Time Based):" style="-fx-font-weight: bold; -fx-text-fill: #ef4444;" GridPane.columnIndex="0" GridPane.rowIndex="6"/>
-        <Label fx:id="lblLateFee" style="-fx-text-fill: #ef4444;" GridPane.columnIndex="1" GridPane.rowIndex="6"/>
+            <Label text="Duration" style="-fx-text-fill: #8b949e; -fx-font-size: 12px;" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+            <Label fx:id="lblDaysStayed" style="-fx-text-fill: #e6edf3; -fx-font-size: 13px;" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
 
-        <Label text="Final Total:" style="-fx-font-size: 20; -fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="7"/>
-        <Label fx:id="lblTotal" style="-fx-font-size: 20; -fx-font-weight: bold; -fx-text-fill: #3b82f6;" GridPane.columnIndex="1" GridPane.rowIndex="7"/>
-    </GridPane>
+            <Label text="Room Rate" style="-fx-text-fill: #8b949e; -fx-font-size: 12px;" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+            <Label fx:id="lblRoomRate" style="-fx-text-fill: #e6edf3; -fx-font-size: 13px;" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
 
-    <Button text="Close Window" onAction="#handleClose" styleClass="action-btn" maxWidth="Infinity"/>
+            <Label text="Base Amount" style="-fx-text-fill: #8b949e; -fx-font-size: 12px;" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+            <Label fx:id="lblBaseCost" style="-fx-text-fill: #e6edf3; -fx-font-size: 13px;" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+
+            <Label text="Additional Discount" style="-fx-text-fill: #3fb950; -fx-font-size: 12px;" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+            <Label fx:id="lblCustomDiscount" style="-fx-text-fill: #3fb950; -fx-font-size: 13px;" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+
+            <Label text="Late Checkout Fee" style="-fx-text-fill: #f85149; -fx-font-size: 12px;" GridPane.columnIndex="0" GridPane.rowIndex="4"/>
+            <Label fx:id="lblLateFee" style="-fx-text-fill: #f85149; -fx-font-size: 13px;" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
+
+            <Label text="GST (12%)" style="-fx-text-fill: #8b949e; -fx-font-size: 12px;" GridPane.columnIndex="0" GridPane.rowIndex="5"/>
+            <Label fx:id="lblGst" style="-fx-text-fill: #e6edf3; -fx-font-size: 13px;" GridPane.columnIndex="1" GridPane.rowIndex="5"/>
+        </GridPane>
+
+        <Separator style="-fx-padding: 16 0; -fx-opacity: 0.8;"/>
+
+        <!-- Total -->
+        <HBox alignment="CENTER_LEFT">
+            <Label text="TOTAL PAYABLE" style="-fx-text-fill: #e6edf3; -fx-font-size: 15px; -fx-font-weight: bold;"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Label fx:id="lblTotal" text="₹0.00" style="-fx-text-fill: #c9a84c; -fx-font-size: 24px; -fx-font-weight: bold;"/>
+        </HBox>
+    </VBox>
+
+    <!-- Footer Actions -->
+    <HBox spacing="12" style="-fx-padding: 20 40;" alignment="CENTER_RIGHT">
+        <Label text="Thank you for choosing Aurum." style="-fx-text-fill: #484f58; -fx-font-size: 12px;"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button text="Print Invoice" onAction="#handlePrint" styleClass="secondary-btn"/>
+        <Button text="Close" onAction="#handleClose" styleClass="action-btn"/>
+    </HBox>
 
 </VBox>

@@ -3,6 +3,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.Region?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.TextArea?>
@@ -10,71 +11,102 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TableColumn?>
-<?import javafx.scene.control.cell.PropertyValueFactory?>
+<?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.Tab?>
 
-<VBox xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.hotel.controller.RoomController" spacing="20" styleClass="content-pane">
+<VBox xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.hotel.controller.RoomController"
+      spacing="0" styleClass="content-pane">
 
-    <Label text="Manage Rooms &amp; Category Types" styleClass="header-label"/>
+    <!-- Page Header -->
+    <HBox alignment="CENTER_LEFT">
+        <VBox spacing="2">
+            <Label text="Room Management" styleClass="header-label"/>
+            <Label text="Configure rooms and room categories" styleClass="page-subtitle"/>
+        </VBox>
+    </HBox>
 
     <TabPane tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
-        
-        <!-- Tab 1: Rooms Framework -->
-        <Tab text="Rooms Framework">
-            <VBox spacing="15" style="-fx-padding: 20 0 0 0;">
-                <GridPane styleClass="grid-pane">
-                    <Label text="Room Number:" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
-                    <TextField fx:id="txtRoomId" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
 
-                    <Label text="Select Room Type:" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
-                    <ComboBox fx:id="cmbRoomType" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+        <!-- Tab 1: Rooms -->
+        <Tab text="Rooms">
+            <VBox spacing="0" style="-fx-padding: 22 0 0 0;">
 
-                    <Button text="Add Room" onAction="#handleAddRoom" styleClass="action-btn" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+                <Label text="ADD NEW ROOM" styleClass="section-title"/>
+                <GridPane styleClass="grid-pane" hgap="16" vgap="14">
+                    <Label text="Room Number" styleClass="form-label" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                    <TextField fx:id="txtRoomId" promptText="e.g. 101, 202, 305" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+
+                    <Label text="Room Category" styleClass="form-label" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                    <ComboBox fx:id="cmbRoomType" promptText="Select a room type..." GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+
+                    <Label text="Floor" styleClass="form-label" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                    <ComboBox fx:id="cmbFloor" promptText="Select floor..." GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+
+                    <HBox spacing="10" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                        <Button text="Add Room" onAction="#handleAddRoom" styleClass="action-btn"/>
+                        <Button text="Clear" onAction="#clearRoomFields" styleClass="secondary-btn"/>
+                    </HBox>
                 </GridPane>
 
-                <HBox spacing="10">
-                    <Button text="Load All Rooms" onAction="#loadAllRooms" styleClass="action-btn"/>
-                    <Button text="Show Available Only" onAction="#loadAvailableRooms" styleClass="secondary-btn"/>
+                <Separator style="-fx-padding: 14 0;"/>
+
+                <HBox spacing="10" alignment="CENTER_LEFT" style="-fx-padding: 0 0 12 0;">
+                    <Label text="ROOM INVENTORY" styleClass="section-title"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Button text="All Rooms" onAction="#loadAllRooms" styleClass="action-btn"/>
+                    <Button text="Available Only" onAction="#loadAvailableRooms" styleClass="secondary-btn"/>
+                    <Button text="Occupied Only" onAction="#loadOccupiedRooms" styleClass="secondary-btn"/>
                 </HBox>
 
                 <TableView fx:id="tblRooms" VBox.vgrow="ALWAYS">
                     <columns>
-                        <TableColumn fx:id="colRoomId" text="Room No" prefWidth="150" />
-                        <TableColumn fx:id="colRoomTypeName" text="Room Type" prefWidth="250" />
-                        <TableColumn fx:id="colPrice" text="Price (₹)" prefWidth="150" />
-                        <TableColumn fx:id="colIsAvailable" text="Available?" prefWidth="100" />
+                        <TableColumn fx:id="colRoomId" text="Room No." prefWidth="100"/>
+                        <TableColumn fx:id="colFloor" text="Floor" prefWidth="80"/>
+                        <TableColumn fx:id="colRoomTypeName" text="Category" prefWidth="200"/>
+                        <TableColumn fx:id="colPrice" text="Rate / Night" prefWidth="140"/>
+                        <TableColumn fx:id="colIsAvailable" text="Status" prefWidth="120"/>
                     </columns>
                 </TableView>
             </VBox>
         </Tab>
 
-        <!-- Tab 2: Room Category Options -->
-        <Tab text="Room Category Options">
-            <VBox spacing="15" style="-fx-padding: 20 0 0 0;">
-                <GridPane styleClass="grid-pane">
-                    <Label text="Type Name:" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
-                    <TextField fx:id="txtTypeName" promptText="e.g. Standard Single" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+        <!-- Tab 2: Room Categories -->
+        <Tab text="Room Categories">
+            <VBox spacing="0" style="-fx-padding: 22 0 0 0;">
 
-                    <Label text="Base Price (₹):" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
-                    <TextField fx:id="txtBasePrice" promptText="e.g. 1500" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+                <Label text="ADD ROOM CATEGORY" styleClass="section-title"/>
+                <GridPane styleClass="grid-pane" hgap="16" vgap="14">
+                    <Label text="Category Name" styleClass="form-label" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                    <TextField fx:id="txtTypeName" promptText="e.g. Deluxe King Suite" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
 
-                    <Label text="Description:" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
-                    <TextArea fx:id="txtDescription" promptText="Details about this type..." prefRowCount="3" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+                    <Label text="Base Rate (₹/night)" styleClass="form-label" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                    <TextField fx:id="txtBasePrice" promptText="e.g. 4500" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
 
-                    <Button text="Add Category" onAction="#handleAddRoomType" styleClass="action-btn" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+                    <Label text="Amenities / Notes" styleClass="form-label" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                    <TextArea fx:id="txtDescription" promptText="AC, TV, WiFi, Minibar, Sea View..." prefRowCount="3" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+
+                    <HBox spacing="10" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                        <Button text="Add Category" onAction="#handleAddRoomType" styleClass="action-btn"/>
+                        <Button text="Clear" onAction="#clearTypeFields" styleClass="secondary-btn"/>
+                    </HBox>
                 </GridPane>
 
-                <HBox spacing="10">
-                    <Button text="Refresh List" onAction="#loadAllRoomTypes" styleClass="action-btn"/>
+                <Separator style="-fx-padding: 14 0;"/>
+
+                <HBox spacing="10" alignment="CENTER_LEFT" style="-fx-padding: 0 0 12 0;">
+                    <Label text="CATEGORY LIST" styleClass="section-title"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Button text="↻ Refresh" onAction="#loadAllRoomTypes" styleClass="secondary-btn"/>
                 </HBox>
 
                 <TableView fx:id="tblRoomTypes" VBox.vgrow="ALWAYS">
                     <columns>
-                        <TableColumn fx:id="colTypeId" text="ID" prefWidth="50" />
-                        <TableColumn fx:id="colTypeName" text="Type Name" prefWidth="200" />
-                        <TableColumn fx:id="colBasePrice" text="Base Price (₹)" prefWidth="150" />
-                        <TableColumn fx:id="colDescription" text="Description" prefWidth="350" />
+                        <TableColumn fx:id="colTypeId" text="ID" prefWidth="50"/>
+                        <TableColumn fx:id="colTypeName" text="Category Name" prefWidth="220"/>
+                        <TableColumn fx:id="colBasePrice" text="Base Rate (₹)" prefWidth="140"/>
+                        <TableColumn fx:id="colDescription" text="Amenities" prefWidth="420"/>
                     </columns>
                 </TableView>
             </VBox>

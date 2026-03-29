@@ -7,12 +7,7 @@ import com.hotel.model.RoomType;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 
 import java.sql.SQLException;
@@ -20,16 +15,18 @@ import java.util.List;
 
 public class RoomController {
 
-    // Tab 1 UI
+    // Tab 1 – Rooms
     @FXML private TextField txtRoomId;
     @FXML private ComboBox<RoomType> cmbRoomType;
+    @FXML private ComboBox<String> cmbFloor;
     @FXML private TableView<Room> tblRooms;
     @FXML private TableColumn<Room, Integer> colRoomId;
+    @FXML private TableColumn<Room, String> colFloor;
     @FXML private TableColumn<Room, String> colRoomTypeName;
     @FXML private TableColumn<Room, Double> colPrice;
     @FXML private TableColumn<Room, Boolean> colIsAvailable;
 
-    // Tab 2 UI
+    // Tab 2 – Room Types (no occupancy)
     @FXML private TextField txtTypeName;
     @FXML private TextField txtBasePrice;
     @FXML private TextArea txtDescription;
@@ -41,48 +38,70 @@ public class RoomController {
 
     @FXML
     public void initialize() {
-        // Init Room columns
+        // Room columns
         colRoomId.setCellValueFactory(data -> new ReadOnlyObjectWrapper<>(data.getValue().getRoomId()));
+        colFloor.setCellValueFactory(data -> new ReadOnlyObjectWrapper<>(deriveFloor(data.getValue().getRoomId())));
         colRoomTypeName.setCellValueFactory(data -> new ReadOnlyObjectWrapper<>(data.getValue().getRoomTypeName()));
         colPrice.setCellValueFactory(data -> new ReadOnlyObjectWrapper<>(data.getValue().getPrice()));
         colIsAvailable.setCellValueFactory(data -> new ReadOnlyObjectWrapper<>(data.getValue().isIsAvailable()));
 
-        // Init RoomType columns
+        colIsAvailable.setCellFactory(col -> new TableCell<>() {
+            @Override
+            protected void updateItem(Boolean item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) { setText(null); setStyle(""); return; }
+                setText(item ? "✓ Available" : "✗ Occupied");
+                setStyle(item
+                    ? "-fx-text-fill: #3fb950; -fx-font-weight: bold;"
+                    : "-fx-text-fill: #f85149; -fx-font-weight: bold;");
+            }
+        });
+
+        // Room type columns
         colTypeId.setCellValueFactory(data -> new ReadOnlyObjectWrapper<>(data.getValue().getTypeId()));
         colTypeName.setCellValueFactory(data -> new ReadOnlyObjectWrapper<>(data.getValue().getTypeName()));
         colBasePrice.setCellValueFactory(data -> new ReadOnlyObjectWrapper<>(data.getValue().getBasePrice()));
         colDescription.setCellValueFactory(data -> new ReadOnlyObjectWrapper<>(data.getValue().getDescription()));
 
+        if (cmbFloor != null) {
+            cmbFloor.setItems(FXCollections.observableArrayList(
+                "Ground Floor", "1st Floor", "2nd Floor", "3rd Floor",
+                "4th Floor", "5th Floor", "6th Floor", "Penthouse"
+            ));
+        }
+
         loadAllRoomTypes();
         loadAllRooms();
     }
 
-    // --- TAB 1: MANAGE ROOMS ---
+    private String deriveFloor(int roomId) {
+        int floor = roomId / 100;
+        if (floor == 0) return "Ground";
+        if (floor == 1) return "1st Floor";
+        if (floor == 2) return "2nd Floor";
+        if (floor == 3) return "3rd Floor";
+        return floor + "th Floor";
+    }
 
     @FXML
     public void handleAddRoom() {
         try {
-            int roomId = Integer.parseInt(txtRoomId.getText());
+            int roomId = Integer.parseInt(txtRoomId.getText().trim());
             RoomType selectedType = cmbRoomType.getValue();
-
             if (selectedType == null) {
-                showAlert(Alert.AlertType.ERROR, "Error", "Please select a room type.");
+                showAlert(Alert.AlertType.ERROR, "Error", "Please select a room category.");
                 return;
             }
-
             Room room = new Room(roomId, selectedType.getTypeId(), true);
             RoomDAO.addRoom(room);
-            
-            showAlert(Alert.AlertType.INFORMATION, "Success", "Room added successfully!");
-            txtRoomId.clear();
-            cmbRoomType.getSelectionModel().clearSelection();
+            showAlert(Alert.AlertType.INFORMATION, "Room Added", "Room " + roomId + " added successfully.");
+            clearRoomFields();
             loadAllRooms();
-
         } catch (NumberFormatException e) {
-            showAlert(Alert.AlertType.ERROR, "Input Error", "Please enter a valid number for Room ID.");
+            showAlert(Alert.AlertType.ERROR, "Input Error", "Room Number must be a valid integer (e.g. 101).");
         } catch (SQLException e) {
-            if (e.getMessage().contains("Duplicate entry")) {
-                showAlert(Alert.AlertType.ERROR, "Database Error", "Room Number already exists.");
+            if (e.getMessage() != null && e.getMessage().contains("Duplicate")) {
+                showAlert(Alert.AlertType.ERROR, "Duplicate", "Room " + txtRoomId.getText() + " already exists.");
             } else {
                 showAlert(Alert.AlertType.ERROR, "Database Error", e.getMessage());
             }
@@ -90,76 +109,86 @@ public class RoomController {
     }
 
     @FXML
+    public void clearRoomFields() {
+        if (txtRoomId != null) txtRoomId.clear();
+        if (cmbRoomType != null) cmbRoomType.getSelectionModel().clearSelection();
+        if (cmbFloor != null) cmbFloor.getSelectionModel().clearSelection();
+    }
+
+    @FXML
     public void loadAllRooms() {
         try {
-            List<Room> rooms = RoomDAO.getAllRooms();
-            tblRooms.setItems(FXCollections.observableArrayList(rooms));
+            tblRooms.setItems(FXCollections.observableArrayList(RoomDAO.getAllRooms()));
         } catch (SQLException e) {
-            showAlert(Alert.AlertType.ERROR, "Database Error", "Failed to load rooms. Please make sure to reset your Database schema via schema.sql.");
+            showAlert(Alert.AlertType.ERROR, "Database Error", "Failed to load rooms.");
         }
     }
 
     @FXML
     public void loadAvailableRooms() {
         try {
-            List<Room> rooms = RoomDAO.getAvailableRooms();
-            tblRooms.setItems(FXCollections.observableArrayList(rooms));
+            tblRooms.setItems(FXCollections.observableArrayList(RoomDAO.getAvailableRooms()));
         } catch (SQLException e) {
             showAlert(Alert.AlertType.ERROR, "Database Error", "Failed to load available rooms.");
         }
     }
 
-    // --- TAB 2: MANAGE ROOM TYPES ---
+    @FXML
+    public void loadOccupiedRooms() {
+        try {
+            List<Room> all = RoomDAO.getAllRooms();
+            all.removeIf(Room::isIsAvailable);
+            tblRooms.setItems(FXCollections.observableArrayList(all));
+        } catch (SQLException e) {
+            showAlert(Alert.AlertType.ERROR, "Database Error", "Failed to load occupied rooms.");
+        }
+    }
 
     @FXML
     public void handleAddRoomType() {
         String typeName = txtTypeName.getText().trim();
-        String description = txtDescription.getText().trim();
         String priceText = txtBasePrice.getText().trim();
+        String description = txtDescription != null ? txtDescription.getText().trim() : "";
 
         if (typeName.isEmpty() || priceText.isEmpty()) {
-            showAlert(Alert.AlertType.ERROR, "Input Error", "Type Name and Base Price cannot be empty.");
+            showAlert(Alert.AlertType.ERROR, "Input Error", "Category Name and Rate are required.");
             return;
         }
-
         try {
             double basePrice = Double.parseDouble(priceText);
             RoomType rt = new RoomType(0, typeName, description, basePrice);
             RoomTypeDAO.addRoomType(rt);
-
-            showAlert(Alert.AlertType.INFORMATION, "Success", "Room Type added successfully!");
-            txtTypeName.clear();
-            txtBasePrice.clear();
-            txtDescription.clear();
-            
-            // Reload both tables and the dropdown since a new type was added!
+            showAlert(Alert.AlertType.INFORMATION, "Category Added", "'" + typeName + "' category created.");
+            clearTypeFields();
             loadAllRoomTypes();
-
         } catch (NumberFormatException e) {
-            showAlert(Alert.AlertType.ERROR, "Input Error", "Please enter a valid number for Base Price.");
+            showAlert(Alert.AlertType.ERROR, "Input Error", "Rate must be a valid number.");
         } catch (SQLException e) {
-            if (e.getMessage().contains("Duplicate entry")) {
-                showAlert(Alert.AlertType.ERROR, "Database Error", "Room Type name already exists.");
+            if (e.getMessage() != null && e.getMessage().contains("Duplicate")) {
+                showAlert(Alert.AlertType.ERROR, "Duplicate", "Category '" + typeName + "' already exists.");
             } else {
-                showAlert(Alert.AlertType.ERROR, "Database Error", "Failed to add room type: " + e.getMessage());
+                showAlert(Alert.AlertType.ERROR, "Database Error", e.getMessage());
             }
         }
     }
 
     @FXML
-    public void loadAllRoomTypes() {
-        try {
-            List<RoomType> types = RoomTypeDAO.getAllRoomTypes();
-            ObservableList<RoomType> observableList = FXCollections.observableArrayList(types);
-            tblRoomTypes.setItems(observableList);
-            // Additionally synchronize the Tab 1 combo box!
-            cmbRoomType.setItems(observableList);
-        } catch (SQLException e) {
-            showAlert(Alert.AlertType.ERROR, "Database Error", "Failed to load room types. Please ensure your schema.sql successfully reset the tables.");
-        }
+    public void clearTypeFields() {
+        if (txtTypeName != null) txtTypeName.clear();
+        if (txtBasePrice != null) txtBasePrice.clear();
+        if (txtDescription != null) txtDescription.clear();
     }
 
-    // --- UTILS ---
+    @FXML
+    public void loadAllRoomTypes() {
+        try {
+            ObservableList<RoomType> list = FXCollections.observableArrayList(RoomTypeDAO.getAllRoomTypes());
+            tblRoomTypes.setItems(list);
+            cmbRoomType.setItems(list);
+        } catch (SQLException e) {
+            showAlert(Alert.AlertType.ERROR, "Database Error", "Failed to load room categories.");
+        }
+    }
 
     private void showAlert(Alert.AlertType type, String title, String content) {
         Alert alert = new Alert(type);

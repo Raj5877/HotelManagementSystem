@@ -2,27 +2,77 @@
 
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Separator?>
 <?import javafx.scene.layout.StackPane?>
+<?import javafx.geometry.Insets?>
 
-<BorderPane xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.hotel.controller.DashboardController" 
-            stylesheets="@../css/style.css" prefWidth="1024" prefHeight="768">
+<BorderPane xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.hotel.controller.DashboardController"
+            stylesheets="@../css/style.css"
+            prefWidth="1100" prefHeight="760">
 
-    <!-- Left Sidebar -->
+    <!-- ── Left Sidebar ─────────────────────────────────── -->
     <left>
-        <VBox styleClass="sidebar" spacing="10" prefWidth="250">
-            <Label text="Hotel Management" />
-            <Button text="Manage Rooms" onAction="#showRooms" maxWidth="Infinity" />
-            <Button text="Manage Customers" onAction="#showCustomers" maxWidth="Infinity" />
-            <Button text="Booking / Checkout" onAction="#showBookings" maxWidth="Infinity" />
+        <VBox styleClass="sidebar" prefWidth="230" spacing="0">
+
+            <!-- Brand Header -->
+            <VBox style="-fx-padding: 28 20 20 20; -fx-background-color: #0d1117; -fx-border-color: transparent transparent #30363d transparent; -fx-border-width: 0 0 1 0;">
+                <Label text="✦ AURUM" styleClass="sidebar-brand-text"/>
+                <Label text="Hotel Management Suite" styleClass="sidebar-sub-text"/>
+            </VBox>
+
+            <!-- Nav Section: Operations -->
+            <Label text="OPERATIONS" style="-fx-text-fill: #484f58; -fx-font-size: 10px; -fx-font-weight: bold; -fx-padding: 20 0 4 20;"/>
+
+            <Button text="⊞  Dashboard" onAction="#showDashboard" maxWidth="Infinity" styleClass="sidebar-btn"/>
+            <Button text="🛏  Rooms" onAction="#showRooms" maxWidth="Infinity" styleClass="sidebar-btn"/>
+            <Button text="👤  Guests" onAction="#showCustomers" maxWidth="Infinity" styleClass="sidebar-btn"/>
+            <Button text="📋  Reservations" onAction="#showBookings" maxWidth="Infinity" styleClass="sidebar-btn"/>
+
+            <Separator style="-fx-padding: 10 0;"/>
+
+            <!-- Footer -->
+            <Region VBox.vgrow="ALWAYS"/>
+            <VBox style="-fx-padding: 16 20; -fx-border-color: #30363d transparent transparent transparent; -fx-border-width: 1 0 0 0;">
+                <Label text="v1.0  |  Aurum HMS" style="-fx-text-fill: #484f58; -fx-font-size: 11px;"/>
+            </VBox>
         </VBox>
     </left>
 
-    <!-- Center Content Area -->
+    <!-- ── Center Content Area ──────────────────────────── -->
     <center>
-        <StackPane fx:id="contentArea" styleClass="content-pane">
-            <Label text="Welcome to the Hotel Management System" styleClass="header-label"/>
+        <StackPane fx:id="contentArea" style="-fx-background-color: #0d1117;">
+            <!-- Default welcome screen shown on launch -->
+            <VBox alignment="CENTER" spacing="30" style="-fx-padding: 60;">
+                <VBox styleClass="welcome-card" spacing="8" alignment="CENTER">
+                    <Label text="Welcome to Aurum HMS" styleClass="welcome-title"/>
+                    <Label text="Select a module from the sidebar to get started." styleClass="welcome-sub"/>
+                </VBox>
+
+                <!-- Quick-action stats row -->
+                <HBox spacing="16" alignment="CENTER">
+                    <VBox styleClass="stat-card" spacing="4" alignment="CENTER_LEFT">
+                        <Label fx:id="lblTotalRooms" text="—" styleClass="stat-number stat-gold"/>
+                        <Label text="TOTAL ROOMS" styleClass="stat-label"/>
+                    </VBox>
+                    <VBox styleClass="stat-card" spacing="4" alignment="CENTER_LEFT">
+                        <Label fx:id="lblAvailableRooms" text="—" styleClass="stat-number stat-green"/>
+                        <Label text="AVAILABLE" styleClass="stat-label"/>
+                    </VBox>
+                    <VBox styleClass="stat-card" spacing="4" alignment="CENTER_LEFT">
+                        <Label fx:id="lblActiveBookings" text="—" styleClass="stat-number stat-blue"/>
+                        <Label text="ACTIVE BOOKINGS" styleClass="stat-label"/>
+                    </VBox>
+                    <VBox styleClass="stat-card" spacing="4" alignment="CENTER_LEFT">
+                        <Label fx:id="lblTotalGuests" text="—" styleClass="stat-number"/>
+                        <Label text="REGISTERED GUESTS" styleClass="stat-label"/>
+                    </VBox>
+                </HBox>
+            </VBox>
         </StackPane>
     </center>
 

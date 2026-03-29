@@ -3,36 +3,79 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.Region?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TableColumn?>
-<?import javafx.scene.control.cell.PropertyValueFactory?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.geometry.Insets?>
 
-<VBox xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.hotel.controller.CustomerController" spacing="20" styleClass="content-pane">
+<VBox xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.hotel.controller.CustomerController"
+      spacing="0" styleClass="content-pane">
 
-    <Label text="Manage Customers" styleClass="header-label"/>
-
-    <GridPane styleClass="grid-pane">
-        <Label text="Name:" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
-        <TextField fx:id="txtName" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
-
-        <Label text="Contact Number:" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
-        <TextField fx:id="txtContact" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
-
-        <Button text="Add Customer" onAction="#handleAddCustomer" styleClass="action-btn" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
-    </GridPane>
-
-    <HBox spacing="10">
-        <Button text="Refresh Customers" onAction="#loadAllCustomers" styleClass="action-btn"/>
+    <!-- Page Header -->
+    <HBox alignment="CENTER_LEFT" spacing="0">
+        <VBox spacing="2">
+            <Label text="Guest Directory" styleClass="header-label"/>
+            <Label text="Register and manage hotel guests" styleClass="page-subtitle"/>
+        </VBox>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button text="↻  Refresh" onAction="#loadAllCustomers" styleClass="secondary-btn"/>
     </HBox>
 
-    <TableView fx:id="tblCustomers" VBox.vgrow="ALWAYS">
+    <!-- Registration Form -->
+    <Label text="REGISTER NEW GUEST" styleClass="section-title"/>
+    <GridPane styleClass="grid-pane" hgap="16" vgap="14">
+
+        <Label text="Full Name" styleClass="form-label" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+        <TextField fx:id="txtName" promptText="e.g. Priya Sharma" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+
+        <Label text="Contact Number" styleClass="form-label" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+        <TextField fx:id="txtContact" promptText="e.g. +91-98765-43210" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+
+        <Label text="Email Address" styleClass="form-label" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+        <TextField fx:id="txtEmail" promptText="e.g. guest@email.com" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+
+        <Label text="ID" styleClass="form-label" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+        <HBox spacing="8" GridPane.columnIndex="1" GridPane.rowIndex="3">
+            <ComboBox fx:id="cmbIdType" promptText="Select ID type..." prefWidth="180"/>
+            <TextField fx:id="txtOtherIdType" promptText="Specify ID type..." prefWidth="150"/>
+        </HBox>
+
+        <Label text="ID Number" styleClass="form-label" GridPane.columnIndex="0" GridPane.rowIndex="4"/>
+        <TextField fx:id="txtIdNumber" promptText="Enter ID number" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
+
+        <HBox spacing="10" GridPane.columnIndex="1" GridPane.rowIndex="5">
+            <Button text="Register Guest" onAction="#handleAddCustomer" styleClass="action-btn"/>
+            <Button text="Clear" onAction="#clearFields" styleClass="secondary-btn"/>
+        </HBox>
+    </GridPane>
+
+    <!-- Separator -->
+    <Separator style="-fx-padding: 14 0;"/>
+
+    <!-- Search Bar -->
+    <HBox spacing="10" alignment="CENTER_LEFT" style="-fx-padding: 0 0 12 0;">
+        <Label text="GUEST LIST" styleClass="section-title"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <TextField fx:id="txtSearch" promptText="Search by name or contact..." style="-fx-min-width: 240;"/>
+        <Button text="Search" onAction="#handleSearch" styleClass="secondary-btn"/>
+    </HBox>
+
+    <!-- Guest Table -->
+    <TableView fx:id="tblCustomers" VBox.vgrow="ALWAYS" style="-fx-pref-height: 300;">
         <columns>
-            <TableColumn fx:id="colCustomerId" text="ID" prefWidth="100"/>
-            <TableColumn fx:id="colName" text="Name" prefWidth="300"/>
-            <TableColumn fx:id="colContact" text="Contact" prefWidth="250"/>
+            <TableColumn fx:id="colCustomerId" text="S.No." prefWidth="60"/>
+            <TableColumn fx:id="colName" text="Full Name" prefWidth="180"/>
+            <TableColumn fx:id="colContact" text="Contact" prefWidth="160"/>
+            <TableColumn fx:id="colEmail" text="Email" prefWidth="200"/>
+            <TableColumn fx:id="colIdType" text="ID Type" prefWidth="150"/>
+            <TableColumn fx:id="colIdNumber" text="ID Number" prefWidth="180"/>
         </columns>
     </TableView>
+
 </VBox>
