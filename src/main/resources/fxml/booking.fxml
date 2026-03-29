@@ -109,8 +109,6 @@
                     <Label text="Room" styleClass="form-label" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
                     <Label fx:id="lblManageRoom" text="—" style="-fx-text-fill: #e6edf3;" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
 
-                    <Label text="Days Remaining" styleClass="form-label" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
-                    <Label fx:id="lblManageDaysLeft" text="—" style="-fx-text-fill: #c9a84c; -fx-font-weight: bold;" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
                 </GridPane>
 
                 <HBox spacing="14" style="-fx-padding: 18 0 0 0;">

@@ -26,7 +26,6 @@ public class BillingController {
     @FXML private Label lblRoomRate;
     @FXML private Label lblBaseCost;
     @FXML private Label lblCustomDiscount;
-    @FXML private Label lblLateFee;
     @FXML private Label lblGst;
     @FXML private Label lblTotal;
 
@@ -40,10 +39,13 @@ public class BillingController {
             Room r = RoomDAO.getRoomById(b.getRoomId());
             if (r == null) return;
 
-            long actualDays = ChronoUnit.DAYS.between(b.getCheckInDate(), actualOut);
-            if (actualDays == 0) actualDays = 1;
+            // A guest cannot check out before their planned date — clamp to it
+            LocalDate billedOut = actualOut.isBefore(b.getCheckOutDate()) ? b.getCheckOutDate() : actualOut;
+
+            long actualDays = ChronoUnit.DAYS.between(b.getCheckInDate(), billedOut);
+            if (actualDays <= 0) actualDays = 1;
             long plannedDays = ChronoUnit.DAYS.between(b.getCheckInDate(), b.getCheckOutDate());
-            if (plannedDays == 0) plannedDays = 1;
+            if (plannedDays <= 0) plannedDays = 1;
 
             double pricePerNight = r.getPrice();
             double baseCost = actualDays * pricePerNight;
@@ -51,17 +53,7 @@ public class BillingController {
             // Custom manual discount only (loyalty discount removed)
             double customDiscount = baseCost * (customDiscountRate / 100.0);
 
-            // Late checkout fee
-            double lateFeeRate = 0.0;
-            String timeCat = b.getActualCheckOutTimeCategory();
-            if (timeCat != null) {
-                if (timeCat.equals("2PM_TO_6PM")) lateFeeRate = 0.50;
-                else if (timeCat.equals("AFTER_6PM")) lateFeeRate = 1.00;
-                else if (timeCat.equals("12PM_TO_2PM")) lateFeeRate = 0.25;
-            }
-            double lateFee = lateFeeRate * pricePerNight;
-
-            double subTotal = baseCost - customDiscount + lateFee;
+            double subTotal = baseCost - customDiscount;
             double gst = subTotal * GST_RATE;
             double finalTotal = subTotal + gst;
 
@@ -83,9 +75,6 @@ public class BillingController {
             String discountText = customDiscountRate > 0
                     ? String.format("-₹%.2f  (%.1f%% applied)", customDiscount, customDiscountRate)
                     : "₹0.00";
-            String lateFeeText = lateFeeRate > 0
-                    ? String.format("+₹%.2f  (%.0f%% of night rate)", lateFee, lateFeeRate * 100)
-                    : "₹0.00  (Standard checkout)";
             String gstText = String.format("₹%.2f  (12%%)", gst);
             String totalText = String.format("₹%.2f", finalTotal);
 
@@ -93,14 +82,13 @@ public class BillingController {
             if (lblRoomRate != null) lblRoomRate.setText(rateText);
             lblBaseCost.setText(baseText);
             lblCustomDiscount.setText(discountText);
-            lblLateFee.setText(lateFeeText);
             if (lblGst != null) lblGst.setText(gstText);
             lblTotal.setText(totalText);
 
             // Build receipt text for file saving
             receiptText = buildReceiptText(invoiceNo, guestName, roomInfo,
-                    daysText, rateText, baseText, discountText, lateFeeText, gstText, totalText,
-                    b.getCheckInDate(), actualOut);
+                    daysText, rateText, baseText, discountText, gstText, totalText,
+                    b.getCheckInDate(), billedOut);
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -109,7 +97,7 @@ public class BillingController {
 
     private String buildReceiptText(String invoiceNo, String guestName, String roomInfo,
                                      String days, String rate, String base, String discount,
-                                     String lateFee, String gst, String total,
+                                     String gst, String total,
                                      LocalDate checkIn, LocalDate checkOut) {
         String line = "=".repeat(52);
         String thin = "-".repeat(52);
@@ -132,7 +120,6 @@ public class BillingController {
                "  Room Rate          : " + rate + "\n" +
                "  Base Amount        : " + base + "\n" +
                "  Additional Discount: " + discount + "\n" +
-               "  Late Checkout Fee  : " + lateFee + "\n" +
                "  GST (12%)          : " + gst + "\n\n" +
                line + "\n" +
                "  TOTAL PAYABLE      : " + total + "\n" +

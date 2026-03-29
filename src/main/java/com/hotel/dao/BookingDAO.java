@@ -78,6 +78,29 @@ public class BookingDAO {
         return bookings;
     }
 
+    /**
+     * Returns all booked date ranges for a given room (excluding a specific bookingId so the current stay isn't blocked).
+     * Each entry is a LocalDate[] of {checkIn, checkOut}.
+     */
+    public static List<LocalDate[]> getBookedRangesForRoom(int roomId, int excludeBookingId) throws SQLException {
+        List<LocalDate[]> ranges = new ArrayList<>();
+        String query = "SELECT check_in_date, check_out_date FROM bookings " +
+                       "WHERE room_id = ? AND booking_id != ? AND actual_check_out_date IS NULL";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
+            pstmt.setInt(1, roomId);
+            pstmt.setInt(2, excludeBookingId);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    LocalDate in  = rs.getDate("check_in_date").toLocalDate();
+                    LocalDate out = rs.getDate("check_out_date").toLocalDate();
+                    ranges.add(new LocalDate[]{in, out});
+                }
+            }
+        }
+        return ranges;
+    }
+
     public static void extendStay(int bookingId, LocalDate newCheckOutDate) throws SQLException {
         String query = "UPDATE bookings SET check_out_date = ? WHERE booking_id = ?";
         try (Connection conn = DBConnection.getConnection();

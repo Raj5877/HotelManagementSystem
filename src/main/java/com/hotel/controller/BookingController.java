@@ -23,6 +23,7 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.scene.control.Tooltip;
 import javafx.util.Callback;
 
 import java.io.IOException;
@@ -59,7 +60,6 @@ public class BookingController {
     @FXML private ComboBox<Booking> cmbManageBooking;
     @FXML private Label lblManageGuest;
     @FXML private Label lblManageRoom;
-    @FXML private Label lblManageDaysLeft;
     @FXML private DatePicker dpExtendTo;
     @FXML private ComboBox<String> cmbCheckoutTime;
     @FXML private TextField txtManualDiscount;
@@ -250,17 +250,68 @@ public class BookingController {
         if (b == null) {
             if (lblManageGuest != null) lblManageGuest.setText("—");
             if (lblManageRoom != null) lblManageRoom.setText("—");
-            if (lblManageDaysLeft != null) lblManageDaysLeft.setText("—");
+            applyDatePickerRestrictions(dpExtendTo, LocalDate.now().plusDays(1));
             return;
         }
         if (lblManageGuest != null) lblManageGuest.setText(b.getCustomerName() != null ? b.getCustomerName() : "—");
         if (lblManageRoom != null) lblManageRoom.setText(b.getRoomInfo() != null ? b.getRoomInfo() : "—");
-        if (lblManageDaysLeft != null) {
-            long daysLeft = ChronoUnit.DAYS.between(LocalDate.now(), b.getCheckOutDate());
-            if (daysLeft > 0) lblManageDaysLeft.setText(daysLeft + " day(s) remaining");
-            else if (daysLeft == 0) lblManageDaysLeft.setText("Checkout due today");
-            else lblManageDaysLeft.setText(Math.abs(daysLeft) + " day(s) overdue");
+
+        // Load booked ranges for this room (excluding current booking) and apply to calendar
+        try {
+            List<LocalDate[]> bookedRanges = BookingDAO.getBookedRangesForRoom(b.getRoomId(), b.getBookingId());
+            applyExtendStayCalendar(dpExtendTo, b.getCheckOutDate(), bookedRanges);
+        } catch (SQLException e) {
+            applyDatePickerRestrictions(dpExtendTo, b.getCheckOutDate().plusDays(1));
         }
+    }
+
+    /**
+     * Apply a dynamic day-cell factory to the Extend Stay DatePicker.
+     * - Dates before minDate (current checkout) are disabled/dimmed.
+     * - Dates in bookedRanges are greyed out with a tooltip explaining the conflict.
+     * - The currently selected booking's checkout date is highlighted as the earliest valid option.
+     */
+    private void applyExtendStayCalendar(DatePicker dp, LocalDate currentCheckOut, List<LocalDate[]> bookedRanges) {
+        dp.setDayCellFactory(picker -> new DateCell() {
+            @Override
+            public void updateItem(LocalDate date, boolean empty) {
+                super.updateItem(date, empty);
+                setTooltip(null);
+
+                // Block dates before or equal to current checkout (must extend beyond it)
+                if (date.isBefore(currentCheckOut) || date.isEqual(currentCheckOut)) {
+                    setDisable(true);
+                    setStyle("-fx-background-color: transparent; " +
+                             "-fx-text-fill: #2d333b; " +
+                             "-fx-opacity: 0.35; " +
+                             "-fx-cursor: default;");
+                    return;
+                }
+
+                // Check if this date falls within another booking's range
+                for (LocalDate[] range : bookedRanges) {
+                    LocalDate rangeIn  = range[0];
+                    LocalDate rangeOut = range[1];
+                    // A date is "blocked" if it is within [rangeIn, rangeOut)
+                    if (!date.isBefore(rangeIn) && date.isBefore(rangeOut)) {
+                        setDisable(true);
+                        setStyle("-fx-background-color: #3a1a1a; " +
+                                 "-fx-text-fill: #8b3a3a; " +
+                                 "-fx-font-weight: bold;");
+                        Tooltip tip = new Tooltip("Already booked: " + rangeIn + " → " + rangeOut);
+                        tip.setStyle("-fx-font-size: 11px;");
+                        setTooltip(tip);
+                        return;
+                    }
+                }
+
+                // Highlight the earliest selectable date (day after current checkout)
+                if (date.isEqual(currentCheckOut.plusDays(1))) {
+                    setStyle("-fx-background-color: #1f3a1f; -fx-text-fill: #3fb950; -fx-font-weight: bold;");
+                    setTooltip(new Tooltip("Earliest extension date"));
+                }
+            }
+        });
     }
 
     private void loadDropdownData() {
