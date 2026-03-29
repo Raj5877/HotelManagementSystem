@@ -28,11 +28,14 @@ import javafx.util.Callback;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class BookingController {
+
+    private static final DateTimeFormatter DATE_FMT = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 
     // Tab 1: New Booking
     @FXML private ComboBox<Customer> cmbCustomer;
@@ -74,16 +77,16 @@ public class BookingController {
         colBookingIdNew.setCellValueFactory(d -> new ReadOnlyObjectWrapper<>(d.getValue().getBookingId()));
         colCustomerNew.setCellValueFactory(d -> new ReadOnlyObjectWrapper<>(d.getValue().getCustomerName()));
         colRoomNew.setCellValueFactory(d -> new ReadOnlyObjectWrapper<>(d.getValue().getRoomInfo()));
-        colInDateNew.setCellValueFactory(d -> new ReadOnlyObjectWrapper<>(d.getValue().getCheckInDate().toString()));
-        colOutDateNew.setCellValueFactory(d -> new ReadOnlyObjectWrapper<>(d.getValue().getCheckOutDate().toString()));
+        colInDateNew.setCellValueFactory(d -> new ReadOnlyObjectWrapper<>(d.getValue().getCheckInDate().format(DATE_FMT)));
+        colOutDateNew.setCellValueFactory(d -> new ReadOnlyObjectWrapper<>(d.getValue().getCheckOutDate().format(DATE_FMT)));
         colStatusNew.setCellValueFactory(d -> new ReadOnlyObjectWrapper<>(d.getValue().getStatus()));
 
         // Tab 2 columns
         colBookingIdManage.setCellValueFactory(d -> new ReadOnlyObjectWrapper<>(d.getValue().getBookingId()));
         colCustomerManage.setCellValueFactory(d -> new ReadOnlyObjectWrapper<>(d.getValue().getCustomerName()));
         colRoomManage.setCellValueFactory(d -> new ReadOnlyObjectWrapper<>(d.getValue().getRoomInfo()));
-        colInDateManage.setCellValueFactory(d -> new ReadOnlyObjectWrapper<>(d.getValue().getCheckInDate().toString()));
-        colOutDateManage.setCellValueFactory(d -> new ReadOnlyObjectWrapper<>(d.getValue().getCheckOutDate().toString()));
+        colInDateManage.setCellValueFactory(d -> new ReadOnlyObjectWrapper<>(d.getValue().getCheckInDate().format(DATE_FMT)));
+        colOutDateManage.setCellValueFactory(d -> new ReadOnlyObjectWrapper<>(d.getValue().getCheckOutDate().format(DATE_FMT)));
         colStatusManage.setCellValueFactory(d -> new ReadOnlyObjectWrapper<>(d.getValue().getStatus()));
 
         // Status column coloring for Tab 1
@@ -334,7 +337,7 @@ public class BookingController {
             return;
         }
         if (extendedDate == null || !extendedDate.isAfter(selected.getCheckOutDate())) {
-            showAlert(Alert.AlertType.ERROR, "Invalid Date", "New date must be after the current check-out: " + selected.getCheckOutDate());
+            showAlert(Alert.AlertType.ERROR, "Invalid Date", "New date must be after the current check-out: " + selected.getCheckOutDate().format(DATE_FMT));
             return;
         }
 

@@ -113,7 +113,8 @@ public class BillingController {
                                      LocalDate checkIn, LocalDate checkOut) {
         String line = "=".repeat(52);
         String thin = "-".repeat(52);
-        String ts = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        DateTimeFormatter dateFmt = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+        String ts = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss"));
 
         return line + "\n" +
                "          ✦  AURUM HOTEL MANAGEMENT SUITE\n" +
@@ -122,8 +123,10 @@ public class BillingController {
                "  Invoice No. : " + invoiceNo + "\n" +
                "  Printed On  : " + ts + "\n\n" +
                thin + "\n" +
-               "  GUEST  : " + guestName + "\n" +
-               "  ROOM   : " + roomInfo + "\n" +
+               "  GUEST     : " + guestName + "\n" +
+               "  ROOM      : " + roomInfo + "\n" +
+               "  Check-In  : " + checkIn.format(dateFmt) + "\n" +
+               "  Check-Out : " + checkOut.format(dateFmt) + "\n" +
                thin + "\n\n" +
                "  Duration           : " + days + "\n" +
                "  Room Rate          : " + rate + "\n" +

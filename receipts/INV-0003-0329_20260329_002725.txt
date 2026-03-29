@@ -1,0 +1,30 @@
+====================================================
+          ✦  AURUM HOTEL MANAGEMENT SUITE
+                  TAX INVOICE
+====================================================
+
+  Invoice No. : INV-0003-0329
+  Printed On  : 29-03-2026 00:26:57
+
+----------------------------------------------------
+  GUEST     : Raj Bhardwaj
+  ROOM      : Room 201  |  Standard Double
+  Check-In  : 30-03-2026
+  Check-Out : 29-03-2026
+----------------------------------------------------
+
+  Duration           : -1 night(s)  [Planned: 10]
+  Room Rate          : ₹2500.00 / night
+  Base Amount        : ₹-2500.00
+  Additional Discount: -₹-250.00  (10.0% applied)
+  Late Checkout Fee  : +₹625.00  (25% of night rate)
+  GST (12%)          : ₹-195.00  (12%)
+
+====================================================
+  TOTAL PAYABLE      : ₹-1820.00
+====================================================
+
+       Thank you for choosing Aurum.
+           We hope to see you again!
+
+====================================================
