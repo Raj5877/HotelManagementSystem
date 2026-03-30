@@ -8,6 +8,7 @@ public class Booking {
     private int roomId;
     private LocalDate checkInDate;
     private LocalDate checkOutDate;
+    private LocalDate originalCheckOutDate; // never changes after booking
     private LocalDate actualCheckOutDate;
     private String actualCheckOutTimeCategory;
 
@@ -15,12 +16,13 @@ public class Booking {
     private String customerName;
     private String roomInfo;
 
-    public Booking(int bookingId, int customerId, int roomId, LocalDate checkInDate, LocalDate checkOutDate, LocalDate actualCheckOutDate, String actualCheckOutTimeCategory) {
+    public Booking(int bookingId, int customerId, int roomId, LocalDate checkInDate, LocalDate checkOutDate, LocalDate originalCheckOutDate, LocalDate actualCheckOutDate, String actualCheckOutTimeCategory) {
         this.bookingId = bookingId;
         this.customerId = customerId;
         this.roomId = roomId;
         this.checkInDate = checkInDate;
         this.checkOutDate = checkOutDate;
+        this.originalCheckOutDate = originalCheckOutDate != null ? originalCheckOutDate : checkOutDate;
         this.actualCheckOutDate = actualCheckOutDate;
         this.actualCheckOutTimeCategory = actualCheckOutTimeCategory;
     }
@@ -39,6 +41,9 @@ public class Booking {
 
     public LocalDate getCheckOutDate() { return checkOutDate; }
     public void setCheckOutDate(LocalDate checkOutDate) { this.checkOutDate = checkOutDate; }
+
+    public LocalDate getOriginalCheckOutDate() { return originalCheckOutDate; }
+    public void setOriginalCheckOutDate(LocalDate d) { this.originalCheckOutDate = d; }
 
     public LocalDate getActualCheckOutDate() { return actualCheckOutDate; }
     public void setActualCheckOutDate(LocalDate actualCheckOutDate) { this.actualCheckOutDate = actualCheckOutDate; }

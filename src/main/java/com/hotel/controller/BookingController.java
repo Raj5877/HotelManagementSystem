@@ -357,7 +357,7 @@ public class BookingController {
         }
 
         try {
-            Booking booking = new Booking(0, guest.getCustomerId(), room.getRoomId(), checkIn, checkOut, null, null);
+            Booking booking = new Booking(0, guest.getCustomerId(), room.getRoomId(), checkIn, checkOut, checkOut, null, null);
             BookingDAO.addBooking(booking);
             showAlert(Alert.AlertType.INFORMATION, "Reservation Confirmed",
                     "Booking created for " + guest.getName() + " in Room " + room.getRoomId() + ".");

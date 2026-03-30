@@ -41,10 +41,7 @@
                     <Label text="Room Category" styleClass="form-label" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
                     <ComboBox fx:id="cmbRoomType" promptText="Select a room type..." GridPane.columnIndex="1" GridPane.rowIndex="1"/>
 
-                    <Label text="Floor" styleClass="form-label" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
-                    <ComboBox fx:id="cmbFloor" promptText="Select floor..." GridPane.columnIndex="1" GridPane.rowIndex="2"/>
-
-                    <HBox spacing="10" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                    <HBox spacing="10" GridPane.columnIndex="1" GridPane.rowIndex="2">
                         <Button text="Add Room" onAction="#handleAddRoom" styleClass="action-btn"/>
                         <Button text="Clear" onAction="#clearRoomFields" styleClass="secondary-btn"/>
                     </HBox>

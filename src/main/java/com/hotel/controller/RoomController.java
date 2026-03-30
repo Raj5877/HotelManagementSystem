@@ -18,7 +18,6 @@ public class RoomController {
     // Tab 1 – Rooms
     @FXML private TextField txtRoomId;
     @FXML private ComboBox<RoomType> cmbRoomType;
-    @FXML private ComboBox<String> cmbFloor;
     @FXML private TableView<Room> tblRooms;
     @FXML private TableColumn<Room, Integer> colRoomId;
     @FXML private TableColumn<Room, String> colFloor;
@@ -63,12 +62,6 @@ public class RoomController {
         colBasePrice.setCellValueFactory(data -> new ReadOnlyObjectWrapper<>(data.getValue().getBasePrice()));
         colDescription.setCellValueFactory(data -> new ReadOnlyObjectWrapper<>(data.getValue().getDescription()));
 
-        if (cmbFloor != null) {
-            cmbFloor.setItems(FXCollections.observableArrayList(
-                "Ground Floor", "1st Floor", "2nd Floor", "3rd Floor",
-                "4th Floor", "5th Floor", "6th Floor", "Penthouse"
-            ));
-        }
 
         loadAllRoomTypes();
         loadAllRooms();
@@ -112,7 +105,6 @@ public class RoomController {
     public void clearRoomFields() {
         if (txtRoomId != null) txtRoomId.clear();
         if (cmbRoomType != null) cmbRoomType.getSelectionModel().clearSelection();
-        if (cmbFloor != null) cmbFloor.getSelectionModel().clearSelection();
     }
 
     @FXML

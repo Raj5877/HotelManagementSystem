@@ -20,12 +20,13 @@ public class BookingDAO {
         try {
             conn.setAutoCommit(false);
             
-            String query = "INSERT INTO bookings (customer_id, room_id, check_in_date, check_out_date) VALUES (?, ?, ?, ?)";
+            String query = "INSERT INTO bookings (customer_id, room_id, check_in_date, check_out_date, original_check_out_date) VALUES (?, ?, ?, ?, ?)";
             try (PreparedStatement pstmt = conn.prepareStatement(query)) {
                 pstmt.setInt(1, booking.getCustomerId());
                 pstmt.setInt(2, booking.getRoomId());
                 pstmt.setDate(3, Date.valueOf(booking.getCheckInDate()));
                 pstmt.setDate(4, Date.valueOf(booking.getCheckOutDate()));
+                pstmt.setDate(5, Date.valueOf(booking.getCheckOutDate())); // original, never changed
                 pstmt.executeUpdate();
             }
 
@@ -61,12 +62,15 @@ public class BookingDAO {
                 Date actualOutDateSql = rs.getDate("actual_check_out_date");
                 LocalDate actualOutDate = (actualOutDateSql != null) ? actualOutDateSql.toLocalDate() : null;
 
+                Date origOutSql = rs.getDate("original_check_out_date");
+                LocalDate origOutDate = (origOutSql != null) ? origOutSql.toLocalDate() : rs.getDate("check_out_date").toLocalDate();
                 Booking b = new Booking(
                         rs.getInt("booking_id"),
                         rs.getInt("customer_id"),
                         rs.getInt("room_id"),
                         rs.getDate("check_in_date").toLocalDate(),
                         rs.getDate("check_out_date").toLocalDate(),
+                        origOutDate,
                         actualOutDate,
                         rs.getString("actual_check_out_time_category")
                 );

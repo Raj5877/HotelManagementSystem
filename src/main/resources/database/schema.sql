@@ -68,6 +68,7 @@ CREATE TABLE IF NOT EXISTS bookings (
     room_id                      INT NOT NULL,
     check_in_date                DATE NOT NULL,
     check_out_date               DATE NOT NULL,
+    original_check_out_date      DATE NOT NULL,
     actual_check_out_date        DATE,
     actual_check_out_time_category VARCHAR(20),
     -- Allowed values: 'BEFORE_12PM', '12PM_TO_2PM', '2PM_TO_6PM', 'AFTER_6PM'

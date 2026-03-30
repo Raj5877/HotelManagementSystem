@@ -3,24 +3,25 @@
                   TAX INVOICE
 ====================================================
 
-  Invoice No. : INV-0006-0329
-  Printed On  : 29-03-2026 01:18:11
+  Invoice No. : INV-0008-0330
+  Printed On  : 30-03-2026 09:41:34
 
 ----------------------------------------------------
-  GUEST     : Raj Bhardwaj
-  ROOM      : Room 103  |  Standard Single
-  Check-In  : 29-03-2026
-  Check-Out : 31-03-2026
+  GUEST     : Priya Sharma
+  ROOM      : Room 102  |  Standard Single
+  Check-In  : 30-03-2026
+  Check-Out : 01-04-2026
 ----------------------------------------------------
 
   Duration           : 2 night(s)  [Planned: 2]
   Room Rate          : ₹1500.00 / night
   Base Amount        : ₹3000.00
-  Additional Discount: -₹150.00  (5.0% applied)
-  GST (12%)          : ₹342.00  (12%)
+  Additional Discount: ₹0.00
+  Late Checkout Fee  : ₹0.00  (Standard checkout)
+  GST (12%)          : ₹360.00  (12%)
 
 ====================================================
-  TOTAL PAYABLE      : ₹3192.00
+  TOTAL PAYABLE      : ₹3360.00
 ====================================================
 
        Thank you for choosing Aurum.
